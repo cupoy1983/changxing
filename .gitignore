@@ -3,3 +3,9 @@
 /.settings
 /data
 /attachment
+
+/windid/attachment
+
+/themes/site/default/css/build
+/themes/forum/default/css/build
+/themes/space/default/css/build

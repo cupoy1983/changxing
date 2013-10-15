@@ -104,7 +104,7 @@
 					}
 				}			
 				var url = this.up_form.attr('action');
-				this.showAjaxData(url,{file:_this.up_hidden.val()},"GET",'json',callback)
+				this.showAjaxData(url,{file:_this.up_hidden.val()},"POST",'json',callback)
 			},
 			
 			 requestStep : function(url,params){

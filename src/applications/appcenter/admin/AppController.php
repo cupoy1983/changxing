@@ -121,11 +121,11 @@ class AppController extends AdminBaseController {
 	 * 本地安装, 分步模式执行应用安装
 	 */
 	public function doInstallAction() {
-		list($file, $step, $hash) = $this->getInput(array('file', 'step', 'hash'));
+		list($file, $step, $hash) = $this->getInput(array('file', 'step', 'hash'), 'post'); if (!$file) $this->showError('APPCENTER:install.checkpackage.fail');
 		$install = $this->_installService();
 		if ($file) {
 			$file = Wind::getRealDir($install->getConfig('tmp_dir'), true) . '/' . $file;
-			$install->setTmpPath(dirname($file));
+			$file = WindSecurity::escapePath($file, true); $install->setTmpPath(dirname($file));
 			if (!WindFile::isFile($file)) $this->showError('APPCENTER:install.checkpackage.fail');
 			$_r = $install->extractPackage($file);
 			if (true !== $_r) $this->showError('APPCENTER:install.checkpackage.format.fail');
@@ -163,7 +163,7 @@ class AppController extends AdminBaseController {
 		$install = Wekit::load('APPCENTER:service.srv.PwUpgradeApplication');
 		$install->_appId = 'L0001344318635mEhO';
 		$file = Wind::getRealDir($install->getConfig('tmp_dir'), true) . '/' . $file;
-		$install->setTmpPath(dirname($file));
+		$file = WindSecurity::escapePath($file, true); $install->setTmpPath(dirname($file));
 		$install->extractPackage($file);
 		$install->initInstall();
 		$_r = $install->doUpgrade();
