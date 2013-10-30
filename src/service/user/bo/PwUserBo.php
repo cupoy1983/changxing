@@ -35,7 +35,7 @@ class PwUserBo {
 			$this->uid = $uid;
 			$this->username = $this->info['username'];
 			$this->gid = ($this->info['groupid'] == 0) ? $this->info['memberid'] : $this->info['groupid'];
-			$this->ip = $this->info['lastloginip'];
+			$this->ip = $this->info['lastloginip'] ? $this->info['lastloginip'] : "127.0.0.1";
 			if ($this->info['groups']) $this->groups = explode(',', $this->info['groups']);
 			$this->groups[] = $this->gid;
 		} else {

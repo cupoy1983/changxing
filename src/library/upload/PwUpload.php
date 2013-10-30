@@ -117,6 +117,42 @@ class PwUpload {
 	}
 	
 	/**
+	 * 上传远程文件主流程
+	 *
+	 * @return mixed
+	 */
+	public function remoteExecute($files) {
+		$uploaddb = array();
+		foreach ($files as $key => $value) {
+			if (!$this->bhv->allowType($key)) {
+				continue;
+			}
+			$file = new PwUploadFile($key, $value);
+			if (($result = $this->checkFile($file)) !== true) {
+				return $result;
+			}
+			$file->filename = $this->filterFileName($this->bhv->getSaveName($file));
+			$file->savedir = $this->bhv->getSaveDir($file);
+			$file->source = $this->store->getAbsolutePath($file->filename, $file->savedir);
+			
+			if (!self::moveUploadedFile($value['tmp_name'], $file->source)) {
+				return new PwError('upload.fail');
+			}else{
+				$this->deleteFile($value['tmp_name']);
+			}
+			if (($result = $file->operate($this->bhv, $this->store)) !== true) {
+				$this->bhv->fileError($file);
+				return $result;
+			}
+			if (($result = $this->saveFile($file)) !== true) {
+				return $result;
+			}
+			$uploaddb[] = $file->getInfo();
+		}
+		return $this->bhv->update($uploaddb);
+	}
+	
+	/**
 	 * 保存文件
 	 *
 	 * @param PwUploadFile $file
@@ -206,6 +242,18 @@ class PwUpload {
 		}
 		return false;
 	}
+
+	/**
+	 * 删除文件
+	 * @param $file
+	 */
+	public static function deleteFile($file){
+		if (unlink($file)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * 创建目录
@@ -221,7 +269,7 @@ class PwUpload {
 			@chmod($path . '/index.html', 0777);
 		}
 	}
-
+	
 	public function __call($methodName, $args) {
 		if (!method_exists($this->bhv, $methodName)) {
 			return false;

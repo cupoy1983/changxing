@@ -232,6 +232,10 @@ abstract class PwPostDm extends PwBaseDm {
 	public function getIscheck() {
 		return $this->_data['ischeck'];
 	}
+	
+	public function getCteatedTime(){
+		return $this->_data['created_time'];
+	}
 
 	protected function _setUseubb($isuse) {
 		$this->_data['useubb'] = $isuse;

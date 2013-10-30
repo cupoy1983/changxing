@@ -81,7 +81,11 @@ class PwTopicPost extends PwPostAction {
 	 * @see PwPostAction.dataProcessing
 	 */
 	public function dataProcessing(PwPostDm $postDm) {
-		$time = Pw::getTime();
+		//主题发表数据中不含时间，则默认为系统时间
+		$time = $postDm->getCteatedTime();
+		if(empty($time)){
+			$time = Pw::getTime();
+		}
 		$postDm->setFid($this->forum->fid)
 			->setAuthor($this->user->uid, $this->user->username, $this->user->ip)
 			->setCreatedTime($time)

@@ -83,10 +83,15 @@ class PwReplyPost extends PwPostAction {
 	 * @see PwPostAction.dataProcessing
 	 */
 	public function dataProcessing(PwPostDm $postDm) {
+		//主题发表数据中不含时间，则默认为系统时间
+		$time = $postDm->getCteatedTime();
+		if(empty($time)){
+			$time = Pw::getTime();
+		}
 		$postDm->setTid($this->tid)
 			->setFid($this->forum->fid)
 			->setAuthor($this->user->uid, $this->user->username, $this->user->ip)
-			->setCreatedTime(Pw::getTime())
+			->setCreatedTime($time)
 			->setDisabled($this->isDisabled());
 		
 		if (($result = $this->checkContentHash($postDm->getContent())) !== true) {
@@ -125,7 +130,10 @@ class PwReplyPost extends PwPostAction {
 			
 			Wind::import('SRV:forum.dm.PwTopicDm');
 			$dm = new PwTopicDm($this->tid);
-			$timestamp = Pw::getTime();
+			$timestamp = $this->postDm->getCteatedTime();
+			if(empty($timestamp)){
+				$timestamp = Pw::getTime();
+			}
 			if ($this->info['lastpost_time'] > $timestamp || Pw::getstatus($this->info['tpcstatus'], PwThread::STATUS_DOWNED)) {
 				$timestamp = null;
 			}
